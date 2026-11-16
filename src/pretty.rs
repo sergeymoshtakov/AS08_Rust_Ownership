@@ -3,8 +3,23 @@ use std::fmt;
 
 /// Pretty prints a term.
 pub fn pretty_print(term: &Term) -> String {
-    format!("{:?}", term)
-    // TODO: Implement pretty printing for lambda calculus terms.
+    match term {
+        Term::Var(x) => x.clone(),
+        Term::Abs(param, body) => {
+            format!("λ{}. {}", param, pretty_print(body))
+        }
+        Term::App(t1, t2) => {
+            let s1 = match **t1 {
+                Term::Abs(_, _) => format!("({})", pretty_print(t1)),
+                _ => pretty_print(t1),
+            };
+            let s2 = match **t2 {
+                Term::Var(_) => pretty_print(t2),
+                _ => format!("({})", pretty_print(t2)),
+            };
+            format!("{} {}", s1, s2)
+        }
+    }
 }
 
 /// Display trait implementation for Term.
